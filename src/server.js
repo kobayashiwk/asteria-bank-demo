@@ -108,16 +108,8 @@ const routes = [
     const account = db.prepare('SELECT id FROM accounts WHERE user_id = ? ORDER BY id LIMIT 1').get(user.id);
     if (!promotion || !account) return json(res, 404, { error: 'promotion_not_found' });
 
-    db.exec('BEGIN IMMEDIATE');
-    try {
-      db.prepare('INSERT INTO redemptions (user_id, code) VALUES (?, ?)').run(user.id, code);
-      db.prepare('UPDATE accounts SET balance = balance + ? WHERE id = ?').run(promotion.credit, account.id);
-      db.exec('COMMIT');
-      json(res, 200, { credited: promotion.credit });
-    } catch {
-      db.exec('ROLLBACK');
-      json(res, 409, { error: 'promotion_already_used' });
-    }
+    db.prepare('UPDATE accounts SET balance = balance + ? WHERE id = ?').run(promotion.credit, account.id);
+    json(res, 200, { credited: promotion.credit });
   }),
   route('GET', /^\/api\/customers$/, async (req, res, _match, url) => {
     const user = requireActor(req, res);
