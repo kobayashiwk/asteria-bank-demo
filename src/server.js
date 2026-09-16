@@ -122,8 +122,8 @@ const routes = [
   route('GET', /^\/api\/customers$/, async (req, res, _match, url) => {
     const user = requireActor(req, res);
     if (!user || user.role !== 'operator') return user && json(res, 403, { error: 'operator_required' });
-    const query = `%${url.searchParams.get('q') ?? ''}%`;
-    const rows = db.prepare('SELECT id, username, display_name AS displayName, email, status FROM users WHERE role = ? AND (username LIKE ? OR display_name LIKE ?)').all('customer', query, query);
+    const query = url.searchParams.get('q') ?? '';
+    const rows = db.prepare(`SELECT id, username, display_name AS displayName, email, status FROM users WHERE role = 'customer' AND (username LIKE '%${query}%' OR display_name LIKE '%${query}%')`).all();
     json(res, 200, rows);
   }),
   route('PATCH', /^\/api\/profile$/, async (req, res) => {
