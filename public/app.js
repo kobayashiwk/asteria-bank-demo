@@ -36,7 +36,7 @@ document.querySelector('#promotion').addEventListener('submit', event => submitJ
 document.querySelector('#preview').addEventListener('submit', async event => {
   event.preventDefault();
   const result = await api('/api/messages/preview', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))) });
-  document.querySelector('#messagePreview').textContent = result.preview;
+  document.querySelector('#messagePreview').innerHTML = result.preview;
 });
 document.querySelector('#search').addEventListener('submit', async event => {
   event.preventDefault();
