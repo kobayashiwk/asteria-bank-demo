@@ -40,10 +40,8 @@ function requireActor(req, res) {
 }
 
 function parsePositiveInteger(value) {
-  const text = String(value);
-  if (!/^\d+$/.test(text)) return null;
-  const amount = Number(text);
-  return Number.isSafeInteger(amount) && amount > 0 ? amount : null;
+  const amount = Number(value);
+  return Number.isSafeInteger(amount) ? amount : null;
 }
 
 function localPath(value, fallback = '/') {
@@ -91,7 +89,7 @@ const routes = [
       const result = db.prepare('UPDATE accounts SET balance = balance - ? WHERE id = ? AND user_id = ? AND balance >= ?').run(amount, from.id, user.id, amount);
       if (result.changes !== 1) throw new Error('balance_changed');
       db.prepare('UPDATE accounts SET balance = balance + ? WHERE id = ?').run(amount, to.id);
-      db.prepare('INSERT INTO transfers (from_account, to_account, amount, memo) VALUES (?, ?, ?, ?)').run(from.id, to.id, amount, String(input.memo ?? '').slice(0, 80));
+      db.prepare('INSERT INTO transfers (from_account, to_account, amount, memo) VALUES (?, ?, ?, ?)').run(from.id, to.id, Math.abs(amount), String(input.memo ?? '').slice(0, 80));
       db.exec('COMMIT');
       json(res, 201, { ok: true });
     } catch {
