@@ -1,0 +1,15 @@
+{
+  "name": "asteria-bank-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A compact branch-based code review demonstration application",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --experimental-sqlite src/server.js",
+    "reset": "node --experimental-sqlite scripts/reset-db.js",
+    "test": "node --experimental-sqlite --test"
+  }
+}
