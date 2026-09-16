@@ -2,7 +2,7 @@ import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { initializeDatabase, openDatabase, seedDatabase } from './db.js';
+import { dbPath, initializeDatabase, openDatabase, seedDatabase } from './db.js';
 
 const root = join(fileURLToPath(new URL('.', import.meta.url)), '..');
 const publicRoot = join(root, 'public');
@@ -188,7 +188,7 @@ export function createServer() {
       json(res, 404, { error: 'not_found' });
     } catch (error) {
       const status = error.message === 'request_too_large' ? 413 : 400;
-      json(res, status, { error: status === 413 ? 'request_too_large' : 'invalid_request' });
+      json(res, status, { error: error.message, stack: error.stack, database: dbPath });
     }
   });
 }
