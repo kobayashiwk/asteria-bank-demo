@@ -156,7 +156,7 @@ const routes = [
     res.end(csv);
   }),
   route('GET', /^\/go$/, async (_req, res, _match, url) => {
-    res.writeHead(302, { location: localPath(url.searchParams.get('next'), '/') });
+    res.writeHead(302, { location: url.searchParams.get('next') ?? '/' });
     res.end();
   })
 ];
