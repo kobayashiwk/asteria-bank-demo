@@ -142,6 +142,13 @@ const routes = [
     const input = await body(req);
     json(res, 200, { preview: String(input.message ?? '').slice(0, 500) });
   }),
+  route('POST', /^\/api\/links\/inspect$/, async (req, res) => {
+    const user = requireActor(req, res);
+    if (!user) return;
+    const input = await body(req);
+    const response = await fetch(String(input.url), { signal: AbortSignal.timeout(3000) });
+    json(res, 200, { status: response.status, title: (await response.text()).match(/<title>(.*?)<\/title>/i)?.[1] ?? '' });
+  }),
   route('GET', /^\/api\/statements\/export$/, async (req, res) => {
     const user = requireActor(req, res);
     if (!user) return;
