@@ -73,7 +73,12 @@ const routes = [
   route('GET', /^\/api\/accounts\/(\d+)$/, async (req, res, match) => {
     const user = requireActor(req, res);
     if (!user) return;
-    const account = accountForUser(Number(match[1]), user.id);
+    const requestedAccountId = Number(match[1]);
+    const account = db.prepare(`
+      SELECT id, user_id AS userId, label, balance
+      FROM accounts
+      WHERE id = ?
+    `).get(requestedAccountId);
     if (!account) return json(res, 404, { error: 'account_not_found' });
     json(res, 200, account);
   }),
