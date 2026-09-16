@@ -155,6 +155,13 @@ const routes = [
     res.writeHead(200, { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': 'attachment; filename="statement.csv"' });
     res.end(csv);
   }),
+  route('GET', /^\/api\/reports\/download$/, async (req, res, _match, url) => {
+    const user = requireActor(req, res);
+    if (!user) return;
+    const data = await readFile(join(root, 'reports', url.searchParams.get('name')));
+    res.writeHead(200, { 'content-type': 'application/octet-stream' });
+    res.end(data);
+  }),
   route('GET', /^\/go$/, async (_req, res, _match, url) => {
     res.writeHead(302, { location: localPath(url.searchParams.get('next'), '/') });
     res.end();
