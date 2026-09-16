@@ -126,6 +126,12 @@ const routes = [
     const rows = db.prepare('SELECT id, username, display_name AS displayName, email, status FROM users WHERE role = ? AND (username LIKE ? OR display_name LIKE ?)').all('customer', query, query);
     json(res, 200, rows);
   }),
+  route('GET', /^\/api\/operator\/accounts$/, async (req, res) => {
+    const user = requireActor(req, res);
+    if (!user) return;
+    const rows = db.prepare('SELECT accounts.id, users.username, accounts.label, accounts.balance FROM accounts JOIN users ON users.id = accounts.user_id ORDER BY accounts.id').all();
+    json(res, 200, rows);
+  }),
   route('PATCH', /^\/api\/profile$/, async (req, res) => {
     const user = requireActor(req, res);
     if (!user) return;
