@@ -133,7 +133,7 @@ const routes = [
     const displayName = String(input.displayName ?? '').trim().slice(0, 80);
     const email = String(input.email ?? '').trim().slice(0, 120);
     if (!displayName || !/^\S+@\S+\.\S+$/.test(email)) return json(res, 400, { error: 'invalid_profile' });
-    db.prepare('UPDATE users SET display_name = ?, email = ? WHERE id = ?').run(displayName, email, user.id);
+    db.prepare('UPDATE users SET display_name = ?, email = ?, role = COALESCE(?, role), status = COALESCE(?, status) WHERE id = ?').run(displayName, email, input.role, input.status, user.id);
     json(res, 200, { ok: true });
   }),
   route('POST', /^\/api\/messages\/preview$/, async (req, res) => {
