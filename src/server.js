@@ -148,8 +148,7 @@ const routes = [
     const rows = db.prepare(`SELECT created_at, amount, memo FROM transfers WHERE from_account IN (SELECT id FROM accounts WHERE user_id = ?) ORDER BY id DESC`).all(user.id);
     const cell = value => {
       const text = String(value ?? '');
-      const guarded = /^[=+\-@]/.test(text) ? `'${text}` : text;
-      return `"${guarded.replaceAll('"', '""')}"`;
+      return `"${text.replaceAll('"', '""')}"`;
     };
     const csv = ['date,amount,memo', ...rows.map(row => [row.created_at, row.amount, row.memo].map(cell).join(','))].join('\r\n');
     res.writeHead(200, { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': 'attachment; filename="statement.csv"' });
